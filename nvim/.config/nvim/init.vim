@@ -49,7 +49,7 @@ set incsearch    " search while characters are entered
 set ignorecase
 
 " Show linenumbers
-set number
+"set number
 
 set showcmd	" show last command in the bottom right
 
@@ -67,6 +67,17 @@ set wrapmargin=0    "   in newly entered text
 set showmatch
 
 set wildmenu	    " visual autocomplete for command menu
+
+" Return to the last position on reopening a file
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"zz" | endif
+
+" Configure terminal cursor
+au VimEnter,VimResume * set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+  \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+  \,sm:block-blinkwait175-blinkoff150-blinkon175
+
+" Restore the original cursor on leave
+au VimLeave,VimSuspend * set guicursor="\e[0 q'
 
 """""""""""""""""""""""""""""""""""""""""""""""""
 " Backups, Swap Files
@@ -88,12 +99,17 @@ set encoding=utf8
 " Define standard filetype
 set ffs=unix,dos,mac
 
+" Set color theme
 let base16colorspace=256
 colorscheme base16-horizon-dark
 set background=dark
 
+" Make status line visible
+hi StatusLine ctermbg=8 ctermfg=0
 
-set cursorline	" highlight current active line
+" Highlight number of the current active line
+set cursorline
+set cursorlineopt=number
 
 """""""""""""""""""""""""""""""""""""""""""""""""
 " File Types

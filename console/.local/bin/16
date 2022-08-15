@@ -1,0 +1,97 @@
+#! /bin/bash
+
+# Location
+location=~/.config/base16-shell/scripts
+favorites=~/.config/16x/favs
+lnk=~/.base16_theme
+
+# Groups
+styles="dark light mono vivid vimdiff broken eyesore universal_pale universal_medium universal_bright eyesore admin_pale admin_medium admin_bright writing_pale writing_medium writing_bright admin_light writing_light admin_stylish"
+
+# Themes by group
+admin_pale="apathy bespin embers onedark paraiso zenburn atelier-dune atelier-estuary "
+admin_stylish="greenscreen grayscale-dark icy grayscale-light heetch marrakesh brogrammer"
+admin_medium="nord ashes atlas chalk circus snazzy dracula ia-dark rebecca eighties twilight woodland darktooth solarflare oceanicnext atelier-cave atelier-heath atelier-forest atelier-plateau atelier-savanna harmonic-dark material-vivid tomorrow-night papercolor-dark gruvbox-dark-hard gruvbox-dark-pale gruvbox-dark-soft gruvbox-dark-medium material-palenight tomorrow-night-eighties tube atelier-sulphurpool "
+admin_bright="pico irblack black-metal black-metal-dark-funeral black-metal-nile black-metal-khold black-metal-venom black-metal-burzum black-metal-marduk black-metal-mayhem black-metal-bathory black-metal-immortal black-metal-gorgoroth isotope "
+admin_light="gruvbox-light-hard cupcake tomorrow cupertino one-light google-light mexico-light classic-light default-light harmonic-light unikitty-light solarized-light summerfruit-light atelier-lakeside-light atelier-cave-light atelier-dune-light atelier-heath-light atelier-forest-light atelier-estuary-light atelier-plateau-light atelier-savanna-light atelier-seaside-light atelier-sulphurpool-light gruvbox-light-soft gruvbox-light-medium "
+writing_pale="flat unikitty-dark solarized-dark "
+writing_medium="google-dark atelier-seaside atelier-lakeside "
+writing_bright="summerfruit-dark "
+universal_pale="mocha ocean materia material hopscotch railscasts "
+universal_medium="phd 3024 seti brewer porple helios monokai spacemacs classic-dark default-dark horizon-dark material-darker "
+universal_bright="pop bright synth-midnight-dark outrun-dark "
+universal_light="github ia-light "
+vimdiff="codeschool macintosh "
+eyesore=" fruit-soda  xcode-dusk shapeshifter brushtrees-dark brushtrees heetch-light papercolor-light material-lighter mellow-purple"
+
+# associative array theme => group
+code="declare -A theme_group=( $(for s in $(echo $styles)
+do
+    for t in $(eval "echo \$$s")
+    do
+        echo "[$t]=$s"
+    done
+done) )"
+eval "$code"
+# all themes
+tt="$(ls $location | grep '.sh$' | cut -c 8- | rev | cut -c 4-|rev)"
+# categorized themes
+ls="$(for t in $tt;
+do
+    echo ${theme_group[$t]:-misc}^$t
+done|sed -e 's!_!/!g' -e 's!\^!/!')"
+
+test="$(cat<<END
+[0m[38;5;8m//[0m[38;5;8m Output the square of a number.[0m
+[0m[35mfn[0m[37m [0m[34mprint_square[0m[37m([0m[37mnum[0m[37m:[0m[37m [0m[35mf64[0m[37m)[0m[37m [0m[37m{[0m
+    [0m[35mlet[0m[37m res [0m[37m=[0m[37m [0m[35mf64[0m[37m::[0m[37mpowf[0m[37m([0m[37mnum[0m[37m,[0m[37m [0m[38;5;16m2.[0m[38;5;16m0[0m[37m)[0m[37m;[0m
+    [0m[37mprintln![0m[37m([0m[37m"[0m[32mThe square of [0m[38;5;16m{:.2}[0m[32m is [0m[38;5;16m{:.2}[0m[32m.[0m[37m"[0m[37m,[0m[37m num[0m[37m,[0m[37m res[0m[37m)[0m[37m;[0m
+[0m[37m}[0m
+0[0m [48;5;1m[38;5;0m  1[0m [48;5;2m[38;5;0m  2[0m [48;5;3m[38;5;0m  3[0m [48;5;4m[38;5;0m  4[0m [48;5;5m[38;5;0m  5[0m [48;5;6m[38;5;0m  6[0m [48;5;7m[38;5;0m  7[0m [48;5;8m[38;5;0m  8[0m [48;5;15m[38;5;0m 15[0m [48;5;16m[38;5;0m 16[0m [48;5;17m[38;5;0m 17[0m [48;5;18m[38;5;0m 18[0m [48;5;19m[38;5;0m 19[0m [48;5;20m[38;5;0m 20[0m [48;5;21m[38;5;0m 21[0m
+END
+)"
+
+banner="$(cat<<END
+┏┓ ┏━┓┏━┓┏━╸   ╺┓ ┏━┓
+┣┻┓┣━┫┗━┓┣╸     ┃ ┣━┓
+┗━┛╹ ╹┗━┛┗━╸   ╺┻╸┗━┛
+Color scheme selector\n
+END
+)"
+help="$(cat <<END
+USAGE: $(basename $0) [-h | --help] [-s | --silent] [QUERY]
+Provides UI for Base16-shell.
+
+  QUERY           Initial filter for the list of themes
+  -h, --help      This message
+  -s, --silent    Do not show banner
+  -b, --blind     No auto-preview (preview available on '?')
+END
+)"
+path="$location/base16-\$(basename {}).sh"
+apply="execute(ln -sf $path $lnk)"
+preview="eval 'source $path' >/dev/tty;echo \"[1;37m\$(grep scheme $path|cut -c3-|sed 's/scheme /[2;37m/')\";echo '$test';"
+show=":default,right,60,border-left"
+
+while [ $# -gt 0 ]
+do
+	case $1 in
+		-h | --help)
+                    echo "$help" >&2
+                    exit 0;;
+		-s | --silent)
+                    banner='';;
+                -b | --blind)
+                    show=":hidden";;
+		*)
+                    filter="$1";;
+	esac
+	shift
+done
+echo -ne "$banner" >&2
+res=$(echo "$ls" | sort | fzf +x -i --reverse --query="$filter" --height=9 --border --bind "esc:abort,enter:$apply+accept" --preview="$preview" --preview-window="$show")
+
+source $lnk
+echo -en '\e[1A\e[K\e[1A\e[K\e[1A\e[K\e[1A\e[K' >&2
+test -x $res || echo Applied theme: $res
+exit 0

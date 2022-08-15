@@ -1,0 +1,24 @@
+#! /bin/bash
+
+cat <<END
+
+
+\\e[XXm      \\e = \\033 = \\x1b
+
+\\e[39m\\e[49m                  Reset colour
+\\e[2K                         Clear Line
+\\e[<L>;<C>H OR \\e[<L>;<C>f    Put the cursor at line L and column C.
+\\e[<N>A                       Move the cursor up N lines
+\\e[<N>B                       Move the cursor down N lines
+\\e[<N>C                       Move the cursor forward N columns
+\\e[<N>D                       Move the cursor backward N columns
+\\e[2J                         Clear the screen, move to (0,0)
+\\e[K                          Erase to end of line
+\\e[s                          Save cursor position
+\\e[u                          Restore cursor position
+
+\\e[4m                         Underline on
+\\e[24m                        Underline off
+\\e[1m                         Bold on
+\\e[21m                        Bold off
+END

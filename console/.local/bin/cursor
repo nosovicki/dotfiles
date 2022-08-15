@@ -1,0 +1,12 @@
+#! /bin/bash
+case $1 in
+    -h|--help) echo >&2 "USAGE: cursor [bb | nb | bu | nu | bv | nv]";;
+    bb) echo -en '\e[1 q';; # blinking block
+    nb) echo -en '\e[2 q';; # steady block
+    bu) echo -en '\e[3 q';; # blinking underline
+    nu) echo -en '\e[4 q';; # steady underline
+    bv) echo -en '\e[5 q';; # blinking vertical bar
+    nv) echo -en '\e[6 q';; # steady vertical bar
+     *) echo -en '\e[0 q';; # default cursor shape configured by the user
+esac
+exit 0
